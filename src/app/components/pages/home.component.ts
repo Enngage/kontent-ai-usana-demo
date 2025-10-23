@@ -8,6 +8,15 @@ import { AppFlexModule } from "../ui/flex";
 
 type FeaturedProduct = {
     readonly title: string;
+    readonly description: string;
+    readonly id: string;
+    readonly image: {
+        readonly url: string;
+    };
+}
+
+type ProductListingItem = {
+    readonly title: string;
     readonly id: string;
     readonly image: {
         readonly url: string;
@@ -24,7 +33,9 @@ type FeaturedProduct = {
 })
 export class HomeComponent {
     private readonly kontentAiService = inject(KontentAiService);
-    protected readonly landingPage = signal<LandingPage | undefined>(undefined);
+    private readonly maxFeaturedProducts = 2;
+    private readonly landingPage = signal<LandingPage | undefined>(undefined);
+    protected readonly products = signal<readonly ProductListingItem[] | undefined>(undefined);
 
     protected readonly heroImage = computed<{ readonly url: string; readonly width: number; readonly height: number } | undefined>(() => {
         const heroImage = this.landingPage()?.elements.hero_image.value?.[0];
@@ -39,9 +50,7 @@ export class HomeComponent {
         return {
             url: this.kontentAiService.getImageBuilder(heroImage.url)
                 .withAutomaticFormat()
-                .withFitMode('crop')
                 .withCompression('lossless')
-                .withFocalPointCrop(0, 0, 1)
                 .withHeight(height)
                 .withWidth(width).getUrl(), width, height
         }
@@ -51,25 +60,24 @@ export class HomeComponent {
         return this.landingPage()?.elements.body_copy.value ?? undefined;
     });
 
+
     protected readonly featuredProducts = computed<readonly FeaturedProduct[] | undefined>(() => {
-        const featuredProducts = this.landingPage()?.elements.featured_products.linkedItems;
+        const featuredProducts = this.landingPage()?.elements.featured_products.linkedItems.slice(0, this.maxFeaturedProducts);
 
         if (!featuredProducts?.length) {
             return undefined;
         }
         return featuredProducts.map<FeaturedProduct>(m => {
-            const widthAndHeight = 130;
             return {
-                title: m.elements.product_type.value?.[0]?.name ?? '',
+                title: m.elements.name.value,
+                description: m.elements.body_benefits.value.map(m => m.name).join(', '),
                 id: m.system.id,
                 image: {
                     url: this.kontentAiService.getImageBuilder(m.elements.images.value?.[0].url)
                         .withAutomaticFormat()
-                        .withFitMode('crop')
                         .withCompression('lossless')
-                        .withFocalPointCrop(0, 0, 1)
-                        .withHeight(widthAndHeight)
-                        .withWidth(widthAndHeight).getUrl(), width: widthAndHeight, height: widthAndHeight
+                        .withHeight(500)
+                        .getUrl()
                 }
             }
         });
@@ -82,6 +90,28 @@ export class HomeComponent {
             )
             .subscribe((response) => {
                 this.landingPage.set(response.data.items?.[0]);
+            });
+
+        promiseToObservable(this.kontentAiService.deliveryClient.items<Product>().limitParameter(20).type('product').toPromise())
+            .pipe(
+                takeUntilDestroyed(),
+            )
+            .subscribe((response) => {
+                this.products.set(response.data.items?.map<ProductListingItem>(m => {
+                    const widthAndHeight = 130;
+                    return {
+                        title: m.elements.product_type.value?.[0]?.name ?? '',
+                        id: m.system.id,
+                        image: {
+                            url: this.kontentAiService.getImageBuilder(m.elements.images.value?.[0].url)
+                                .withAutomaticFormat()
+                                .withCompression('lossless')
+                                .withFocalPointCrop(0, 0, 1)
+                                .withHeight(widthAndHeight)
+                                .withWidth(widthAndHeight).getUrl(), width: widthAndHeight, height: widthAndHeight
+                        }
+                    }
+                }));
             });
     }
 }

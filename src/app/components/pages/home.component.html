@@ -12,18 +12,39 @@
         <div [innerHTML]="bodyCopyHtml"></div>
     </div>
     }
-
-    @if (featuredProducts(); as featuredProducts) {
-    <div class="featured-products-container">
-        <div class="featured-products-grid" [libFlexRow]="true" [libFlexRowGap]="'24px'">
-            @for (product of featuredProducts; track product.id) {
-            <div class="featured-product-item" libFlexColumn>
+    @if (products(); as products) {
+    <div class="products-container">
+        <div [libFlexRow]="true" [libFlexRowGap]="'32px'" [libFlexRowAlign]="'center'">
+            @for (product of products; track product.id) {
+            <div libFlexColumn>
                 <div>
                     <img [ngSrc]="product.image.url" [width]="product.image.width" [height]="product.image.height"
                         priority alt="">
                 </div>
                 <div>
                     <h4> {{product.title}}</h4>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    }
+
+    @if (featuredProducts(); as featuredProducts) {
+    <div class="featured-products-container">
+        <div [libFlexRow]="false" [libFlexRowAlign]="'center'" [libFlexRowGap]="'24px'">
+            @for (product of featuredProducts; track product.id) {
+            <div libFlexColumn libFlexFill>
+                <div>
+                    <div class="featured-product-image-wrapper">
+                        <img [ngSrc]="product.image.url" fill priority alt="">
+                    </div>
+                    <div>
+                        <div class="featured-product-title"> {{product.title}}</div>
+                        <div class="featured-product-description">
+                            {{product.description}}
+                        </div>
+                    </div>
                 </div>
             </div>
             }

@@ -19,6 +19,29 @@
     text-align: center;
     margin-top: 48px;
 
+    .featured-product-image-wrapper {
+        position: relative;
+        height: 500px;
+    }
+
+    .featured-product-title {
+        margin-top: 16px;
+        text-align: left;
+        font-size: 18px;
+        font-weight: 500;
+    }
+
+    .featured-product-description {
+        text-align: left;
+        font-size: 16px;
+        opacity: 0.5;
+    }
+}
+
+.products-container {
+    text-align: center;
+    margin-top: 64px;
+
     img {
         border-radius: 100%;
     }
