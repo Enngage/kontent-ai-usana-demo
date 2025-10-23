@@ -51,4 +51,22 @@
         </div>
     </div>
     }
+
+    @if (homeCTA(); as homeCTA) {
+    <div class="home-cta-container">
+        <div [libFlexRow]="false" [libFlexRowAlign]="'start'" [libFlexRowGap]="'24px'">
+            <div libFlexColumn>
+                <img [ngSrc]="homeCTA.image.url" [width]="homeCTA.image.width" [height]="homeCTA.image.height" alt="">
+            </div>
+            <div libFlexColumn [libFlexSize]="'fill'">
+                <div>
+                    <h3 class="home-cta-title"> {{homeCTA.title}}</h3>
+                    <div [innerHTML]="homeCTA.textHtml"></div>
+                    <ui-button> {{homeCTA.buttonText}}</ui-button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    }
 </div>

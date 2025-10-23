@@ -5,31 +5,34 @@ import { promiseToObservable } from "../../utils/core.utils";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { NgOptimizedImage } from "@angular/common";
 import { AppFlexModule } from "../ui/flex";
+import { AppImage } from "../../models/core.models";
+import { UiButtonComponent } from "../ui/ui-button.component";
 
 type FeaturedProduct = {
     readonly title: string;
     readonly description: string;
     readonly id: string;
-    readonly image: {
-        readonly url: string;
-    };
+    readonly image: Omit<AppImage, 'height' | 'width'>;
+}
+
+type HomeCTA = {
+    readonly title: string;
+    readonly image: AppImage
+    readonly textHtml: string;
+    readonly buttonText: string;
 }
 
 type ProductListingItem = {
     readonly title: string;
     readonly id: string;
-    readonly image: {
-        readonly url: string;
-        readonly width: number;
-        readonly height: number;
-    };
+    readonly image: AppImage;
 }
 
 @Component({
     selector: 'home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
-    imports: [NgOptimizedImage, AppFlexModule],
+    imports: [NgOptimizedImage, AppFlexModule, UiButtonComponent],
 })
 export class HomeComponent {
     private readonly kontentAiService = inject(KontentAiService);
@@ -58,6 +61,31 @@ export class HomeComponent {
 
     protected readonly bodyCopyHtml = computed<string | undefined>(() => {
         return this.landingPage()?.elements.body_copy.value ?? undefined;
+    });
+
+    protected readonly homeCTA = computed<HomeCTA | undefined>(() => {
+        const homeCTA = this.landingPage()?.elements.call_to_action.linkedItems;
+
+        if (!homeCTA?.length) {
+            return undefined;
+        }
+
+        const image = homeCTA[0].elements.image.value?.[0];
+        
+        if (!image) {
+            return undefined;
+        }
+
+        return {
+            title: homeCTA[0].elements.header.value,
+            image: {
+                url: image.url,
+                width: image.width ?? 0,
+                height: image.height ?? 0,
+            },
+            textHtml: homeCTA[0].elements.body_copy.value,
+            buttonText: homeCTA[0].elements.button_text.value,
+        }
     });
 
 
