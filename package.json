@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "generate-kontent-models": "tsx ./scripts/generate-kontent-models.ts && npm run biome:fix"
+    "generate-kontent-models": "tsx ./scripts/generate-kontent-models.ts"
   },
   "prettier": {
     "printWidth": 100,
