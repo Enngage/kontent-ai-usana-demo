@@ -1,14 +1,14 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HeaderComponent } from './components/ui/header.component';
-import { FooterComponent } from './components/ui/footer.component';
+import { UiHeaderComponent } from './components/ui/ui-header.component';
+import { UiFooterComponent } from './components/ui/ui-footer.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, HeaderComponent, FooterComponent],
+  imports: [RouterOutlet, UiHeaderComponent, UiFooterComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('usana-demo');
+  protected readonly title = signal('Usana Demo');
 }
