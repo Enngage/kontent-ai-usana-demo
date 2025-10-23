@@ -1,1 +1,3 @@
-Home
+@if (heroImage(); as heroImage) {
+<img [ngSrc]="heroImage.url" [width]="heroImage.width" [height]="heroImage.height" priority alt="Hero Image">
+}
