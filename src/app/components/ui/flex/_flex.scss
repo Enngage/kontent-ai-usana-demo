@@ -1,0 +1,359 @@
+@mixin flex() {
+	.ui-flex-row {
+		flex: 1;
+		display: flex;
+		flex-direction: row;
+		gap: 24px;
+
+		@media only screen and (max-width: 960px) {
+			gap: 24px;
+		}
+
+		&.ui-flex-row-direction-column {
+			flex-direction: column;
+			min-width: 0; /* Required for text clipping https://css-tricks.com/flexbox-truncated-text/ */
+		}
+
+		&.ui-flex-row-direction-column-reverse {
+			flex-direction: column-reverse;
+			min-width: 0; /* Required for text clipping https://css-tricks.com/flexbox-truncated-text/ */
+		}
+
+		&.ui-flex-row-direction-row {
+			flex-direction: row;
+		}
+
+		&.ui-flex-row-direction-row-reverse {
+			flex-direction: row-reverse;
+		}
+
+		&.ui-flex-row-align-center {
+			align-items: center;
+			justify-content: center;
+		}
+
+		&.ui-flex-row-align-end {
+			align-items: flex-end;
+			justify-content: flex-end;
+		}
+
+		&.ui-flex-row-align-start {
+			align-items: flex-start;
+			justify-content: flex-start;
+		}
+
+		&.ui-flex-row-align-space-between {
+			justify-content: space-between;
+		}
+
+		&.ui-flex-row-align-space-evenly {
+			justify-content: space-evenly;
+		}
+
+		&.ui-flex-row-align-space-around {
+			justify-content: space-around;
+		}
+
+		&.ui-flex-row-align-stretch {
+			align-items: stretch;
+		}
+
+		&.ui-flex-wrap {
+			flex-wrap: wrap;
+		}
+
+		&.ui-flex-row-gap-4px {
+			gap: 4px;
+		}
+
+		&.ui-flex-row-gap-5px {
+			gap: 5px;
+		}
+
+		&.ui-flex-row-gap-6px {
+			gap: 6px;
+		}
+
+		&.ui-flex-row-gap-8px {
+			gap: 8px;
+		}
+
+		&.ui-flex-row-gap-12px {
+			gap: 12px;
+		}
+
+		&.ui-flex-row-gap-16px {
+			gap: 16px;
+		}
+
+		&.ui-flex-row-gap-24px {
+			gap: 24px;
+		}
+
+		&.ui-flex-row-gap-32px {
+			gap: 32px;
+		}
+
+		&.ui-flex-row-gap-48px {
+			gap: 48px;
+		}
+
+		&.ui-flex-row-gap-64px {
+			gap: 64px;
+		}
+
+		&.ui-flex-row-gap-2px {
+			gap: 2px;
+		}
+
+		&.ui-flex-row-gap-1px {
+			gap: 1px;
+		}
+
+		&.ui-flex-row-gap-0px {
+			gap: 0px;
+		}
+
+		.ui-flex-column {
+			display: flex;
+			flex-direction: column;
+			align-items: left;
+			justify-content: center;
+			min-width: 0; /* Required for text clipping https://css-tricks.com/flexbox-truncated-text/ */
+
+			&.ui-flex-align-top {
+				justify-content: start;
+			}
+
+			&.ui-flex-align-center {
+				justify-content: center;
+			}
+
+			&.ui-flex-no-shrink {
+				flex-shrink: 0;
+			}
+
+			&.ui-flex-size-full {
+				flex: 100%;
+			}
+
+			&.ui-flex-size-fill {
+				flex: 1;
+			}
+
+			&.ui-flex-size-100px {
+				min-width: 100px;
+				width: 100px;
+			}
+
+			&.ui-flex-size-20px {
+				min-width: 20px;
+				width: 20px;
+			}
+
+			&.ui-flex-size-25px {
+				min-width: 25px;
+				width: 25px;
+			}
+
+			&.ui-flex-size-30px {
+				min-width: 30px;
+				width: 30px;
+			}
+
+			&.ui-flex-size-35px {
+				min-width: 35px;
+				width: 35px;
+			}
+
+			&.ui-flex-size-40px {
+				min-width: 40px;
+				width: 40px;
+			}
+
+			&.ui-flex-size-45px {
+				min-width: 45px;
+				width: 45px;
+			}
+
+			&.ui-flex-size-50px {
+				min-width: 50px;
+				width: 50px;
+			}
+
+			&.ui-flex-size-60px {
+				min-width: 60px;
+				width: 60px;
+			}
+
+			&.ui-flex-size-70px {
+				min-width: 70px;
+				width: 70px;
+			}
+
+			&.ui-flex-size-80px {
+				min-width: 80px;
+				width: 80px;
+			}
+
+			&.ui-flex-size-90px {
+				min-width: 90px;
+				width: 90px;
+			}
+
+			&.ui-flex-size-110px {
+				min-width: 110px;
+				width: 110px;
+			}
+
+			&.ui-flex-size-120px {
+				min-width: 120px;
+				width: 120px;
+			}
+
+			&.ui-flex-size-130px {
+				min-width: 130px;
+				width: 130px;
+			}
+
+			&.ui-flex-size-140px {
+				min-width: 140px;
+				width: 140px;
+			}
+
+			&.ui-flex-size-150px {
+				min-width: 150px;
+				width: 150px;
+			}
+
+			&.ui-flex-size-160px {
+				min-width: 160px;
+				width: 160px;
+			}
+
+			&.ui-flex-size-170px {
+				min-width: 170px;
+				width: 170px;
+			}
+
+			&.ui-flex-size-180px {
+				min-width: 180px;
+				width: 180px;
+			}
+
+			&.ui-flex-size-190px {
+				min-width: 190px;
+				width: 190px;
+			}
+
+			&.ui-flex-size-200px {
+				min-width: 200px;
+				width: 200px;
+			}
+
+			&.ui-flex-size-220px {
+				min-width: 220px;
+				width: 220px;
+			}
+
+			&.ui-flex-size-250px {
+				min-width: 250px;
+				width: 250px;
+			}
+
+			&.ui-flex-size-300px {
+				min-width: 300px;
+				width: 300px;
+			}
+
+			&.ui-flex-size-350px {
+				min-width: 350px;
+				width: 350px;
+			}
+
+			&.ui-flex-size-400px {
+				min-width: 400px;
+				width: 400px;
+			}
+
+			&.ui-flex-size-450px {
+				min-width: 450px;
+				width: 450px;
+			}
+
+			&.ui-flex-size-500px {
+				min-width: 500px;
+				width: 500px;
+			}
+
+			&.ui-flex-size-600px {
+				min-width: 600px;
+				width: 600px;
+			}
+
+			&.ui-flex-size-700px {
+				min-width: 700px;
+				width: 700px;
+			}
+
+			&.ui-flex-size-800px {
+				min-width: 800px;
+				width: 800px;
+			}
+
+			&.ui-flex-size-30 {
+				min-width: 30%;
+				width: 30%;
+			}
+
+			&.ui-flex-size-35 {
+				min-width: 35%;
+				width: 35%;
+			}
+
+			&.ui-flex-size-40 {
+				min-width: 40%;
+				width: 40%;
+			}
+
+			&.ui-flex-size-50 {
+				min-width: 50%;
+				width: 50%;
+			}
+
+			&.ui-flex-size-60 {
+				min-width: 60%;
+				width: 60%;
+			}
+
+			&.ui-flex-size-70 {
+				min-width: 70%;
+				width: 70%;
+			}
+
+			&.ui-flex-size-80 {
+				min-width: 80%;
+				width: 80%;
+			}
+
+			&.ui-flex-size-90 {
+				min-width: 90%;
+				width: 90%;
+			}
+
+			&.ui-flex-size-100 {
+				min-width: 100%;
+				width: 100%;
+			}
+
+			&.ui-flex-size-avatar {
+				min-width: 50px;
+				width: 50px;
+				img {
+					width: 50px;
+					height: 50px;
+				}
+			}
+		}
+	}
+}

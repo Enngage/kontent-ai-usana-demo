@@ -1,3 +1,33 @@
-@if (heroImage(); as heroImage) {
-<img [ngSrc]="heroImage.url" [width]="heroImage.width" [height]="heroImage.height" priority alt="Hero Image">
-}
+<div class="home-container">
+
+    @if (heroImage(); as heroImage) {
+
+    <div class="hero-image-container">
+        <img [ngSrc]="heroImage.url" [width]="heroImage.width" [height]="heroImage.height" priority alt="Hero Image">
+    </div>
+    }
+
+    @if (bodyCopyHtml(); as bodyCopyHtml) {
+    <div class="body-copy-container">
+        <div [innerHTML]="bodyCopyHtml"></div>
+    </div>
+    }
+
+    @if (featuredProducts(); as featuredProducts) {
+    <div class="featured-products-container">
+        <div class="featured-products-grid" [libFlexRow]="true" [libFlexRowGap]="'24px'">
+            @for (product of featuredProducts; track product.id) {
+            <div class="featured-product-item" libFlexColumn>
+                <div>
+                    <img [ngSrc]="product.image.url" [width]="product.image.width" [height]="product.image.height"
+                        priority alt="">
+                </div>
+                <div>
+                    <h4> {{product.title}}</h4>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    }
+</div>

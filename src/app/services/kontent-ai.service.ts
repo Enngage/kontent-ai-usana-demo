@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { createDeliveryClient } from "@kontent-ai/delivery-sdk";
+import { createDeliveryClient, ImageUrlTransformationBuilder } from "@kontent-ai/delivery-sdk";
 import { CoreDeliveryClient } from "../../_generated/delivery";
 import { environment } from "../../environments/environment";
 
@@ -9,7 +9,6 @@ import { environment } from "../../environments/environment";
 export class KontentAiService {
 
     public readonly deliveryClient: CoreDeliveryClient;
-
     constructor() {
         this.deliveryClient = createDeliveryClient({
             environmentId: environment.kontent.environmentId,
@@ -17,5 +16,8 @@ export class KontentAiService {
         });
     }
 
+    getImageBuilder(url: string): ImageUrlTransformationBuilder {
+        return new ImageUrlTransformationBuilder(url);
+    }
 
 }

@@ -1,10 +1,16 @@
+@use './app/components/ui/flex/_flex.scss';
+
+@include flex.flex();
+
 :root {
     --header-color: #2d2d2d;
     --footer-color: #e8e8e8;
     --primary-color: oklch(51.01% 0.274 263.83);
+
 }
 
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     padding: 0;

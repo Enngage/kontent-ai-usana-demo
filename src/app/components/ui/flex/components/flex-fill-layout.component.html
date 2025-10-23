@@ -1,0 +1,19 @@
+<div style="display: flex; flex-flow: column; height: 100%">
+	<div style="flex: 0 1 auto">
+		@if (header(); as header) {
+		<ng-template [ngTemplateOutlet]="header"></ng-template>
+		}
+	</div>
+
+	<div style="flex: 1 1 auto">
+		@if (content(); as content) {
+		<ng-template [ngTemplateOutlet]="content"></ng-template>
+		}
+	</div>
+
+	<div style="flex: 0 1 auto">
+		@if (footer(); as footer) {
+		<ng-template [ngTemplateOutlet]="footer"></ng-template>
+		}
+	</div>
+</div>
