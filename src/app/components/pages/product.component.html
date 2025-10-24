@@ -23,7 +23,7 @@
     </nav>
     }
     <div [libFlexRow]="true" [libFlexRowAlign]="'start'" [libFlexRowGap]="'24px'">
-        <div libFlexColumn [libFlexSize]="'300px'">
+        <div libFlexColumn [libFlexSize]="'300px'" class="product-image-container">
             @if (product.image; as image) {
             <img [ngSrc]="image.url" [width]="image.width" [height]="image.height" priority alt="">
             }
