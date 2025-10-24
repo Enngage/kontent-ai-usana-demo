@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { HomeComponent } from './components/pages/home.component';
 import { ProductComponent } from './components/pages/product.component';
 import { ProductListingComponent } from './components/pages/product-listing.component';
+import { NotFoundComponent } from './components/pages/not-found.component';
 
 export const routes: Routes = [
     {
@@ -15,5 +16,9 @@ export const routes: Routes = [
     {
         path: 'product/:codename',
         component: ProductComponent,
+    },
+    {
+        path: '**',
+        component: NotFoundComponent,
     },
 ];
