@@ -19,6 +19,14 @@
     text-align: center;
     margin-top: 48px;
 
+    a {
+        text-decoration: none;
+        color: inherit;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
     .featured-product-image-wrapper {
         position: relative;
         height: 500px;
@@ -44,6 +52,7 @@
 
     a {
         text-decoration: none;
+        color: inherit;
 
         &:hover {
             text-decoration: underline;

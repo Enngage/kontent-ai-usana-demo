@@ -35,7 +35,7 @@
         <div [libFlexRow]="false" [libFlexRowAlign]="'center'" [libFlexRowGap]="'24px'">
             @for (product of featuredProducts; track product.id) {
             <div libFlexColumn libFlexFill>
-                <div>
+                <a [routerLink]="product.url">
                     <div class="featured-product-image-wrapper">
                         <img [ngSrc]="product.image.url" fill priority alt="">
                     </div>
@@ -45,7 +45,7 @@
                             {{product.description}}
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
             }
         </div>

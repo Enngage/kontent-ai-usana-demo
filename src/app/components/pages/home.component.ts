@@ -10,12 +10,14 @@ import { UiButtonComponent } from "../ui/ui-button.component";
 import { CoreComponent } from "../core/core.component";
 import { getProductListingUrl } from "./product-listing.component";
 import { RouterLink } from "@angular/router";
+import { getProductUrl } from "./product.component";
 
 type FeaturedProduct = {
     readonly title: string;
     readonly description: string;
     readonly id: string;
     readonly image: Omit<AppImage, 'height' | 'width'>;
+    readonly url: string;
 }
 
 type HomeCTA = {
@@ -103,6 +105,7 @@ export class HomeComponent extends CoreComponent {
                 title: m.elements.name.value,
                 description: m.elements.body_benefits.value.map(m => m.name).join(', '),
                 id: m.system.id,
+                url: getProductUrl(m.system.codename),
                 image: {
                     url: this.kontentAiService.getImageBuilder(m.elements.images.value?.[0].url)
                         .withAutomaticFormat()
