@@ -1,12 +1,12 @@
-import { Component, computed, inject, resource, signal } from "@angular/core";
+import { Component, computed, resource, signal } from "@angular/core";
 import { AppFlexModule } from "../ui/flex/flex.module";
 import { UiButtonComponent } from "../ui/ui-button.component";
 import { NgOptimizedImage } from "@angular/common";
 import { CoreComponent } from "../core/core.component";
-import { isProductTypeTaxonomyTermCodename, LandingPage, Page, PageElementCodenames, Product, ProductElementCodenames, ProductTypeTaxonomyTermCodenames } from "../../../_generated/delivery";
-import { ActivatedRoute, RouterLink } from "@angular/router";
+import { isProductTypeTaxonomyTermCodename, Page, PageElementCodenames, Product, ProductElementCodenames, ProductTypeTaxonomyTermCodenames } from "../../../_generated/delivery";
+import { RouterLink } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { getElementsProperty, getImageHeightWhilePreservingAspectRatio, isNotUndefined, promiseToObservable } from "../../utils/core.utils";
+import { getElementsProperty, getImageHeightWhilePreservingAspectRatio, isNotUndefined } from "../../utils/core.utils";
 import { AppImage } from "../../models/core.models";
 import { getProductUrl } from "./product.component";
 
@@ -47,17 +47,17 @@ export class ProductListingComponent extends CoreComponent {
 
     protected readonly productIntro = resource<ProductIntro | undefined | 'n/a', { readonly categoryCodename: ProductTypeTaxonomyTermCodenames | undefined }>({
         params: () => ({ categoryCodename: this.currentProductTypeCodename() }),
-        loader: ({ params: { categoryCodename } }) => this.getProductIntro(categoryCodename, this.isPreview()),
+        loader: ({ params: { categoryCodename } }) => this.withPreservedScrollPosition(() => this.getProductIntro(categoryCodename, this.isPreview())),
     });
 
     protected readonly products = resource<readonly ProductItem[] | undefined, { readonly categoryCodename: ProductTypeTaxonomyTermCodenames | undefined }>({
         params: () => ({ categoryCodename: this.currentProductTypeCodename() }),
-        loader: ({ params: { categoryCodename } }) => this.getProducts(categoryCodename, this.isPreview()),
+        loader: ({ params: { categoryCodename } }) => this.withPreservedScrollPosition(() => this.getProducts(categoryCodename, this.isPreview())),
     });
 
     protected readonly productCategories = resource<readonly ProductCategory[] | undefined, { readonly isPreview: boolean }>({
         params: () => ({ isPreview: this.isPreview() }),
-        loader: ({ params: { isPreview } }) => this.getProductCategories(isPreview),
+        loader: ({ params: { isPreview } }) => this.withPreservedScrollPosition(() => this.getProductCategories(isPreview)),
     });
 
     constructor() {

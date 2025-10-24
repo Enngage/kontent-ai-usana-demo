@@ -1,8 +1,5 @@
-import { Component, computed, inject, resource, signal } from "@angular/core";
-import { KontentAiService } from "../../services/kontent-ai.service";
+import { Component, computed, resource } from "@angular/core";
 import { LandingPage, Product } from "../../../_generated/delivery";
-import { promiseToObservable } from "../../utils/core.utils";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { NgOptimizedImage } from "@angular/common";
 import { AppFlexModule } from "../ui/flex";
 import { AppImage } from "../../models/core.models";
@@ -116,12 +113,12 @@ export class HomeComponent extends CoreComponent {
 
     protected readonly landingPage = resource<LandingPage | undefined, { readonly isPreview: boolean }>({
         params: () => ({ isPreview: this.isPreview() }),
-        loader: ({ params: { isPreview } }) => this.getLandingPage(isPreview),
+        loader: ({ params: { isPreview } }) => this.withPreservedScrollPosition(() => this.getLandingPage(isPreview)),
     });
 
     protected readonly products = resource<readonly ProductListingItem[] | undefined, { readonly isPreview: boolean }>({
         params: () => ({ isPreview: this.isPreview() }),
-        loader: ({ params: { isPreview } }) => this.getProducts(isPreview),
+        loader: ({ params: { isPreview } }) => this.withPreservedScrollPosition(() => this.getProducts(isPreview)),
     });
 
     constructor() {

@@ -68,7 +68,7 @@ export class ProductComponent extends CoreComponent {
 
     protected readonly kontentProduct = resource<BaseProductInfo | undefined | 'n/a', { readonly codename: string | undefined, readonly usePreview: boolean }>({
         params: () => ({ codename: this.currentCodename(), usePreview: this.isPreview() }),
-        loader: ({ params: { codename, usePreview } }) => this.getKontentProduct(codename, usePreview),
+        loader: ({ params: { codename, usePreview } }) => this.withPreservedScrollPosition(() => this.getKontentProduct(codename, usePreview)),
     });
 
     protected readonly commerceToolsProduct = resource<SKUInfo | undefined, { readonly id: string | undefined }>({
@@ -81,7 +81,7 @@ export class ProductComponent extends CoreComponent {
 
             return { id: kontentProduct.commerceToolsId };
         },
-        loader: ({ params: { id } }) => this.getCommerceToolsProduct(id),
+        loader: ({ params: { id } }) => this.withPreservedScrollPosition(() => this.getCommerceToolsProduct(id)),
     });
 
     constructor() {
