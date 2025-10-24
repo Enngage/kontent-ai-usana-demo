@@ -77,7 +77,7 @@
             @for (section of sections; track section.title) {
             @if (section.html.length > 0) {
             <div class="product-section">
-                <h3 class="section-title">{{section.title}}</h3>
+                <h2 class="section-title">{{section.title}}</h2>
                 <div class="section-content" [innerHTML]="section.html"></div>
             </div>
             }

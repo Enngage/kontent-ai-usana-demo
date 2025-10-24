@@ -5,7 +5,7 @@ import { AppFlexModule } from "../ui/flex/flex.module";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AppImage } from "../../models/core.models";
 import { BodyBenefitsTaxonomyTermCodenames, Product as KontentProduct, ProductTypeTaxonomyTermCodenames } from "../../../_generated/delivery";
-import { formatPriceInCents, getImageHeightWhilePreservingAspectRatio } from "../../utils/core.utils";
+import { formatPriceInCents, getImageHeightWhilePreservingAspectRatio, isNotUndefined } from "../../utils/core.utils";
 import { RouterLink } from "@angular/router";
 import { getProductListingUrl } from "./product-listing.component";
 
@@ -18,6 +18,11 @@ type BodyBenefit = {
     readonly icon: string;
 }
 
+type Section = {
+    readonly title: string;
+    readonly html: string;
+}
+
 type BaseProductInfo = {
     readonly categoryCodename: ProductTypeTaxonomyTermCodenames;
     readonly categories: readonly string[];
@@ -26,7 +31,7 @@ type BaseProductInfo = {
     readonly image: AppImage | undefined;
     readonly commerceToolsId: string | undefined;
     readonly bodyBenefits: readonly BodyBenefit[];
-    readonly sections: readonly { readonly title: string; readonly html: string }[];
+    readonly sections: readonly Section[];
 }
 
 type SKUInfo = {
@@ -108,7 +113,6 @@ export class ProductComponent extends CoreComponent {
 
         return this.kontentAiService.deliveryClient.item<KontentProduct>(codename).toPromise().then(response => {
             const item = response.data.item;
-
             const image = item.elements.images.value?.[0];
 
             if (!image) {
@@ -125,6 +129,7 @@ export class ProductComponent extends CoreComponent {
                     { title: 'About the Product', html: item.elements.about_the_product.value },
                     { title: 'How to Use & what to expect', html: item.elements.how_to_use.value },
                     { title: 'Our Formula', html: item.elements.our_formula.value },
+                    ...this.getQualityAssuranceSections(item),
                 ],
                 categories: item.elements.product_type.value.map(m => m.name),
                 title: item.elements.name.value,
@@ -144,6 +149,22 @@ export class ProductComponent extends CoreComponent {
             console.error(error);
             return 'n/a';
         });
+    }
+
+    private getQualityAssuranceSections(item: KontentProduct): readonly Section[] {
+        const qualityAssurance = item.elements.quality_assurance.linkedItems?.[0];
+
+
+        if (!qualityAssurance) {
+            return [];
+        }
+
+        return [
+            {
+                title: qualityAssurance.elements.header.value,
+                html: qualityAssurance.elements.body_copy.value,
+            },
+        ]
     }
 
     private getBodyBenefitIcon(bodyBenefit: BodyBenefitsTaxonomyTermCodenames): string {
