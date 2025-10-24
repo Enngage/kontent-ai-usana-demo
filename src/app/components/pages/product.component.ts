@@ -23,6 +23,7 @@ type SKUInfo = {
     readonly skuId: string;
     readonly price: string;
     readonly inStockCount: number;
+    readonly description: string;
 }
 
 @Component({
@@ -126,8 +127,10 @@ export class ProductComponent extends CoreComponent {
         return this.commerceToolsService.getProductById(id).then(response => {
             const channels = response.masterData.current.masterVariant.availability?.channels;
             const channel = Object.entries(channels ?? {})?.[0];
+            const description =  Object.entries(response.masterData.current.description ?? {})?.[0]?.[1] ?? '';
 
             const skuInfo: SKUInfo = {
+                description: description,
                 skuId: response.key ?? '',
                 price: formatPriceInCents(response.masterData.current.masterVariant.prices?.[0]?.value?.centAmount ?? 0),
                 inStockCount: channel?.[1]?.availableQuantity ?? 0,

@@ -17,15 +17,33 @@
         </div>
         <div libFlexColumn libFlexFill>
             <h1>{{product.title}}</h1>
-            <div [innerHTML]="product.descriptionHtml"></div>
-
+            <div class="product-description" [innerHTML]="product.descriptionHtml"></div>
             <div class="product-price-container">
                 @if (commerceToolsProduct.value(); as skuInfo) {
-                <div class="product-price-info">
-                    <div class="product-price-info-value">{{skuInfo.price}}</div>
+                @if (skuInfo.description) {
+                <div class="product-description-section">
+                    <div>{{skuInfo.description}}</div>
                 </div>
-                <div>
-                    In stock: {{skuInfo.inStockCount}}
+                }
+                <div class="price-section">
+                    <div class="price-label">Price</div>
+                    <div class="price-value">{{skuInfo.price}}</div>
+                </div>
+                <div class="stock-section">
+                    <div class="stock-badge" [class.in-stock]="skuInfo.inStockCount > 0"
+                        [class.low-stock]="skuInfo.inStockCount <= 10 && skuInfo.inStockCount > 0"
+                        [class.out-of-stock]="skuInfo.inStockCount === 0">
+                        <span class="stock-indicator"></span>
+                        <span class="stock-text">
+                            @if (skuInfo.inStockCount > 10) {
+                            In Stock
+                            } @else if (skuInfo.inStockCount > 0) {
+                            Low Stock ({{skuInfo.inStockCount}} remaining)
+                            } @else {
+                            Out of Stock
+                            }
+                        </span>
+                    </div>
                 </div>
                 }
             </div>
