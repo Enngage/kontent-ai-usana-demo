@@ -1,0 +1,33 @@
+.product-listing-container {
+    a {
+        text-decoration: none;
+        color: inherit;
+
+        &:hover {
+            text-decoration: underline;
+        }
+
+        &.active {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+    }
+}
+
+.product-intro-container {
+    margin-top: 32px;
+    text-align: center;
+}
+
+.products-container {
+    margin-top: 32px;
+    text-align: center;
+
+    .product-item {
+        padding: 16px;
+        background-color: #f0f0f0;
+    }
+    .product-item-actions {
+        padding-bottom: 16px;
+    }
+}

@@ -20,6 +20,7 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "outputPath": "dist/usana-demo",
             "assets": [
               {
                 "glob": "**/*",
@@ -32,6 +33,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/kontent-ai-usana-demo/",
               "budgets": [
                 {
                   "type": "initial",
@@ -90,6 +92,9 @@
               "src/styles.scss"
             ]
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }

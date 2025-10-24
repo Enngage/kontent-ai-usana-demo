@@ -7,6 +7,9 @@ import { NgOptimizedImage } from "@angular/common";
 import { AppFlexModule } from "../ui/flex";
 import { AppImage } from "../../models/core.models";
 import { UiButtonComponent } from "../ui/ui-button.component";
+import { CoreComponent } from "../core/core.component";
+import { getProductListingUrl } from "./product-listing.component";
+import { RouterLink } from "@angular/router";
 
 type FeaturedProduct = {
     readonly title: string;
@@ -26,16 +29,16 @@ type ProductListingItem = {
     readonly title: string;
     readonly id: string;
     readonly image: AppImage;
+    readonly url: string | undefined;
 }
 
 @Component({
     selector: 'home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
-    imports: [NgOptimizedImage, AppFlexModule, UiButtonComponent],
+    imports: [NgOptimizedImage, AppFlexModule, UiButtonComponent, RouterLink],
 })
-export class HomeComponent {
-    private readonly kontentAiService = inject(KontentAiService);
+export class HomeComponent extends CoreComponent {
     private readonly maxFeaturedProducts = 2;
     private readonly landingPage = signal<LandingPage | undefined>(undefined);
     protected readonly products = signal<readonly ProductListingItem[] | undefined>(undefined);
@@ -71,7 +74,7 @@ export class HomeComponent {
         }
 
         const image = homeCTA[0].elements.image.value?.[0];
-        
+
         if (!image) {
             return undefined;
         }
@@ -112,6 +115,13 @@ export class HomeComponent {
     });
 
     constructor() {
+        super();
+
+        this.loadLandingPage();
+        this.loadProducts();
+    }
+
+    private loadLandingPage(): void {
         promiseToObservable(this.kontentAiService.deliveryClient.items<LandingPage>().limitParameter(1).type('landing_page').toPromise())
             .pipe(
                 takeUntilDestroyed(),
@@ -119,7 +129,9 @@ export class HomeComponent {
             .subscribe((response) => {
                 this.landingPage.set(response.data.items?.[0]);
             });
+    }
 
+    private loadProducts(): void {
         promiseToObservable(this.kontentAiService.deliveryClient.items<Product>().limitParameter(20).type('product').toPromise())
             .pipe(
                 takeUntilDestroyed(),
@@ -127,9 +139,11 @@ export class HomeComponent {
             .subscribe((response) => {
                 this.products.set(response.data.items?.map<ProductListingItem>(m => {
                     const widthAndHeight = 130;
+                    const productType = m.elements.product_type.value?.[0];
                     return {
-                        title: m.elements.product_type.value?.[0]?.name ?? '',
+                        title: productType?.name ?? '',
                         id: m.system.id,
+                        url: productType?.codename ? getProductListingUrl(productType.codename) : undefined,
                         image: {
                             url: this.kontentAiService.getImageBuilder(m.elements.images.value?.[0].url)
                                 .withAutomaticFormat()

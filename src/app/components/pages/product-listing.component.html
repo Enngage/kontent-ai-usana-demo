@@ -1,0 +1,55 @@
+<div [libFlexRow]="true" [libFlexRowGap]="'24px'" class="product-listing-container">
+    @if (productCategories(); as productCategories) {
+    @for (productCategory of productCategories; track productCategory.codename) {
+    <div libFlexColumn>
+        <a [class.active]="productCategory.codename === currentProductTypeCodename()"
+            [routerLink]="(productCategory.url)">{{productCategory.name}}</a>
+    </div>
+    }
+    }
+</div>
+
+<div class="product-intro-container">
+
+    <div libFlexRow [libFlexRowAlign]="'center'">
+        <div libFlexColumn>
+            @if (productIntro.value(); as productIntro) {
+
+            @if (productIntro === 'n/a') {
+            <em>Product intro not found</em>
+            } @else {
+            <div>
+                @if (productIntro.image; as image) {
+                <img [ngSrc]="image.url" [width]="image.width" [height]="image.height" priority alt="">
+                }
+                <h1>{{productIntro.title}}</h1>
+                <div [innerHTML]="productIntro.descriptionHtml"></div>
+
+            </div>
+            }
+
+            }
+        </div>
+    </div>
+</div>
+
+
+<div class="products-container">
+    @if (products.value(); as products) {
+    <div [libFlexRow]="true" [libFlexRowGap]="'24px'" [libFlexRowAlign]="'stretch'">
+        @for (product of products; track product.id) {
+        <div libFlexColumn [libFlexSize]="'250px'" class="product-item">
+                <img [ngSrc]="product.image.url" [width]="product.image.width" [height]="product.image.height" priority
+                    alt="">
+                <h4>{{product.title}}</h4>
+                <div class="product-item-actions">
+                    <a>
+                        <ui-button>View Product</ui-button>
+                    </a>
+                </div>
+
+        </div>
+        }
+    </div>
+    }
+</div>
