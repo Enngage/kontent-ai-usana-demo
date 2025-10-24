@@ -1,20 +1,28 @@
-import { Component, resource, signal } from "@angular/core";
+import { Component, computed, resource, signal } from "@angular/core";
 import { CoreComponent } from "../core/core.component";
 import { NgOptimizedImage } from "@angular/common";
 import { AppFlexModule } from "../ui/flex/flex.module";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AppImage } from "../../models/core.models";
-import { Product } from "../../../_generated/delivery";
-import { getImageHeightWhilePreservingAspectRatio } from "../../utils/core.utils";
+import { Product as KontentProduct } from "../../../_generated/delivery";
+import { formatPriceInCents, getImageHeightWhilePreservingAspectRatio } from "../../utils/core.utils";
+import { Product as CommerceToolsProduct } from "@commercetools/platform-sdk";
 
 export function getProductUrl(codename: string): string {
     return `/product/${codename}`;
 }
 
-type ProductInfo = {
+type BaseProductInfo = {
     readonly title: string;
     readonly descriptionHtml: string;
     readonly image: AppImage | undefined;
+    readonly commerceToolsId: string | undefined;
+}
+
+type SKUInfo = {
+    readonly skuId: string;
+    readonly price: string;
+    readonly inStockCount: number;
 }
 
 @Component({
@@ -27,15 +35,38 @@ export class ProductComponent extends CoreComponent {
 
     private readonly currentCodename = signal<string | undefined>(undefined);
 
-    protected readonly product = resource<ProductInfo | undefined | 'n/a', { readonly codename: string | undefined }>({
+    protected readonly kontentProduct = resource<BaseProductInfo | undefined | 'n/a', { readonly codename: string | undefined }>({
         params: () => ({ codename: this.currentCodename() }),
-        loader: ({ params: { codename } }) => this.getProduct(codename),
+        loader: ({ params: { codename } }) => this.getKontentProduct(codename),
+    });
+
+    protected readonly commerceToolsProduct = resource<SKUInfo | undefined, { readonly id: string | undefined }>({
+        params: () => {
+            const kontentProduct = this.kontentProduct.value();
+
+            if (!kontentProduct || kontentProduct === 'n/a') {
+                return { id: undefined };
+            }
+
+            return { id: kontentProduct.commerceToolsId };
+        },
+        loader: ({ params: { id } }) => this.getCommerceToolsProduct(id),
     });
 
     constructor() {
         super();
 
         this.subscribeToRouteParams();
+    }
+
+    private extractCommerceToolsId(kontentProduct: KontentProduct): string | undefined {
+        try {
+            const value = JSON.parse(kontentProduct.elements.product_catalog.value) as ({ readonly id: string | undefined }[]);
+            return value?.[0]?.id;
+        } catch (error) {
+            console.error('Failed to extract CommerceTools ID from Kontent product', error);
+            return undefined;
+        }
     }
 
     private subscribeToRouteParams(): void {
@@ -51,14 +82,15 @@ export class ProductComponent extends CoreComponent {
             });
     }
 
-    private getProduct(codename: string | undefined): Promise<ProductInfo | undefined | 'n/a'> {
+    private getKontentProduct(codename: string | undefined): Promise<BaseProductInfo | undefined | 'n/a'> {
         if (!codename) {
             return Promise.resolve(undefined);
         }
 
-        return this.kontentAiService.deliveryClient.item<Product>(codename).toPromise().then(response => {
+        return this.kontentAiService.deliveryClient.item<KontentProduct>(codename).toPromise().then(response => {
             const item = response.data.item;
-            const image = item?.elements.images.value?.[0];
+
+            const image = item.elements.images.value?.[0];
 
             if (!image) {
                 return 'n/a';
@@ -67,9 +99,10 @@ export class ProductComponent extends CoreComponent {
             const width = 300;
             const height = getImageHeightWhilePreservingAspectRatio({ originalWidth: image.width, originalHeight: image.height, targetWidth: width });
 
-            const productInfo: ProductInfo = {
+            const productInfo: BaseProductInfo = {
                 title: item.elements.name.value,
                 descriptionHtml: item.elements.more_information.value,
+                commerceToolsId: this.extractCommerceToolsId(item),
                 image: {
                     url: this.kontentAiService.getImageBuilder(image.url)
                         .withHeight(height)
@@ -78,9 +111,32 @@ export class ProductComponent extends CoreComponent {
             };
 
             return productInfo;
+
         }).catch<'n/a'>(error => {
             console.error(error);
             return 'n/a';
+        });
+    }
+
+    private getCommerceToolsProduct(id: string | undefined): Promise<SKUInfo | undefined> {
+        if (!id) {
+            return Promise.resolve(undefined);
+        }
+
+        return this.commerceToolsService.getProductById(id).then(response => {
+            const channels = response.masterData.current.masterVariant.availability?.channels;
+            const channel = Object.entries(channels ?? {})?.[0];
+
+            const skuInfo: SKUInfo = {
+                skuId: response.key ?? '',
+                price: formatPriceInCents(response.masterData.current.masterVariant.prices?.[0]?.value?.centAmount ?? 0),
+                inStockCount: channel?.[1]?.availableQuantity ?? 0,
+            };
+
+            return skuInfo;
+        }).catch(error => {
+            console.error('Failed to get CommerceTools product', error);
+            return undefined;
         });
     }
 }   

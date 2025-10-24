@@ -18,3 +18,7 @@ export function getImageHeightWhilePreservingAspectRatio({ originalWidth, origin
 
     return (targetWidth * originalHeight) / originalWidth;
 }
+
+export function formatPriceInCents(price: number): string {
+    return `$${price / 100}`;
+}

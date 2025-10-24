@@ -1,4 +1,4 @@
-@if (product.value(); as product) {
+@if (kontentProduct.value(); as product) {
 @if (product === 'n/a') {
 <div class="product-unavailable">
     <div class="product-unavailable-icon">ℹ️</div>
@@ -9,7 +9,7 @@
 </div>
 } @else {
 <div class="product-container">
-    <div [libFlexRow]="true" [libFlexRowGap]="'24px'">
+    <div [libFlexRow]="true" [libFlexRowAlign]="'start'" [libFlexRowGap]="'24px'">
         <div libFlexColumn [libFlexSize]="'300px'">
             @if (product.image; as image) {
             <img [ngSrc]="image.url" [width]="image.width" [height]="image.height" priority alt="">
@@ -18,8 +18,21 @@
         <div libFlexColumn libFlexFill>
             <h1>{{product.title}}</h1>
             <div [innerHTML]="product.descriptionHtml"></div>
+
+            <div class="product-price-container">
+                @if (commerceToolsProduct.value(); as skuInfo) {
+                <div class="product-price-info">
+                    <div class="product-price-info-value">{{skuInfo.price}}</div>
+                </div>
+                <div>
+                    In stock: {{skuInfo.inStockCount}}
+                </div>
+                }
+            </div>
         </div>
     </div>
+
+
 </div>
 }
 }
