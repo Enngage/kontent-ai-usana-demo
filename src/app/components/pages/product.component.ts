@@ -4,9 +4,10 @@ import { NgOptimizedImage } from "@angular/common";
 import { AppFlexModule } from "../ui/flex/flex.module";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AppImage } from "../../models/core.models";
-import { BodyBenefitsTaxonomyTermCodenames, Product as KontentProduct } from "../../../_generated/delivery";
+import { BodyBenefitsTaxonomyTermCodenames, Product as KontentProduct, ProductTypeTaxonomyTermCodenames } from "../../../_generated/delivery";
 import { formatPriceInCents, getImageHeightWhilePreservingAspectRatio } from "../../utils/core.utils";
 import { RouterLink } from "@angular/router";
+import { getProductListingUrl } from "./product-listing.component";
 
 export function getProductUrl(codename: string): string {
     return `/product/${codename}`;
@@ -18,6 +19,7 @@ type BodyBenefit = {
 }
 
 type BaseProductInfo = {
+    readonly categoryCodename: ProductTypeTaxonomyTermCodenames;
     readonly categories: readonly string[];
     readonly title: string;
     readonly descriptionHtml: string;
@@ -43,6 +45,14 @@ type SKUInfo = {
 export class ProductComponent extends CoreComponent {
 
     private readonly currentCodename = signal<string | undefined>(undefined);
+
+    protected readonly currentCategoryUrl = computed(() => {
+        const kontentProduct = this.kontentProduct.value();
+        if (!kontentProduct || kontentProduct === 'n/a') {
+            return undefined;
+        }
+        return getProductListingUrl(kontentProduct.categoryCodename);
+    });
 
     protected readonly kontentProduct = resource<BaseProductInfo | undefined | 'n/a', { readonly codename: string | undefined }>({
         params: () => ({ codename: this.currentCodename() }),
@@ -109,6 +119,7 @@ export class ProductComponent extends CoreComponent {
             const height = getImageHeightWhilePreservingAspectRatio({ originalWidth: image.width, originalHeight: image.height, targetWidth: width });
 
             const productInfo: BaseProductInfo = {
+                categoryCodename: item.elements.product_type.value?.[0]?.codename,
                 sections: [
                     { title: 'More Information', html: item.elements.more_information.value },
                     { title: 'About the Product', html: item.elements.about_the_product.value },

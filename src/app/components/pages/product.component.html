@@ -15,7 +15,7 @@
         <a [routerLink]="'/'" class="breadcrumb-item breadcrumb-link">Home</a>
         <span class="breadcrumb-separator">/</span>
         @for (category of categories; track $index; let isLast = $last) {
-        <span class="breadcrumb-item">{{category}}</span>
+        <a [routerLink]="currentCategoryUrl()" class="breadcrumb-item">{{category}}</a>
         @if (!isLast) {
         <span class="breadcrumb-separator">/</span>
         }
