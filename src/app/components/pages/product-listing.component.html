@@ -11,12 +11,17 @@
 
 <div class="product-intro-container">
 
-    <div libFlexRow [libFlexRowAlign]="'center'">
-        <div libFlexColumn>
+
             @if (productIntro.value(); as productIntro) {
 
             @if (productIntro === 'n/a') {
-            <em>Product intro not found</em>
+            <div class="info-unavailable">
+                <div class="info-unavailable-icon">ℹ️</div>
+                <h3 class="info-unavailable-title">Category Information Unavailable</h3>
+                <p class="info-unavailable-description">
+                    Introduction content for this category is currently not available.
+                </p>
+            </div>
             } @else {
             <div>
                 @if (productIntro.image; as image) {
@@ -29,27 +34,39 @@
             }
 
             }
-        </div>
-    </div>
+   
 </div>
 
 
 <div class="products-container">
     @if (products.value(); as products) {
+
+    @if (products.length > 0) {
     <div [libFlexRow]="true" [libFlexRowGap]="'24px'" [libFlexRowAlign]="'stretch'">
         @for (product of products; track product.id) {
         <div libFlexColumn [libFlexSize]="'250px'" class="product-item">
-                <img [ngSrc]="product.image.url" [width]="product.image.width" [height]="product.image.height" priority
-                    alt="">
-                <h4>{{product.title}}</h4>
-                <div class="product-item-actions">
-                    <a>
-                        <ui-button>View Product</ui-button>
-                    </a>
-                </div>
+            <img [ngSrc]="product.image.url" [width]="product.image.width" [height]="product.image.height" priority
+                alt="">
+            <h4>{{product.title}}</h4>
+            <div class="product-item-actions">
+                <a [routerLink]="product.url">
+                    <ui-button>View Product</ui-button>
+                </a>
+            </div>
 
         </div>
         }
     </div>
+    } @else {
+    <div class="empty-state">
+        <div class="empty-state-icon">📦</div>
+        <h3 class="empty-state-title">No Products Found</h3>
+        <p class="empty-state-description">
+            We couldn't find any products in this category at the moment.
+            <br>
+            Please check back later or browse other categories.
+        </p>
+    </div>
+    }
     }
 </div>

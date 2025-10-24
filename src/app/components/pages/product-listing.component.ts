@@ -3,7 +3,7 @@ import { AppFlexModule } from "../ui/flex/flex.module";
 import { UiButtonComponent } from "../ui/ui-button.component";
 import { NgOptimizedImage } from "@angular/common";
 import { CoreComponent } from "../core/core.component";
-import { isProductTypeTaxonomyTermCodename, LandingPage, Page, PageElementCodenames, Product, ProductTypeTaxonomyTermCodenames } from "../../../_generated/delivery";
+import { isProductTypeTaxonomyTermCodename, LandingPage, Page, PageElementCodenames, Product, ProductElementCodenames, ProductTypeTaxonomyTermCodenames } from "../../../_generated/delivery";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { getElementsProperty, getImageHeightWhilePreservingAspectRatio, isNotUndefined, promiseToObservable } from "../../utils/core.utils";
@@ -98,7 +98,7 @@ export class ProductListingComponent extends CoreComponent {
             return Promise.resolve(undefined);
         }
 
-        return this.kontentAiService.deliveryClient.items<Product>().limitParameter(10).type('product').toPromise().then(response => {
+        return this.kontentAiService.deliveryClient.items<Product>().limitParameter(10).type('product').anyFilter(getElementsProperty<ProductElementCodenames>('product_type'), [productTypeCodename]).toPromise().then(response => {
             return response.data.items?.map<ProductItem | undefined>(m => {
                 const image = m.elements.images.value?.[0];
                 if (!image) {
