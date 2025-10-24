@@ -29,6 +29,7 @@
             }
         </div>
         <div libFlexColumn libFlexFill>
+
             <h1>{{product.title}}</h1>
             <div class="product-description" [innerHTML]="product.descriptionHtml"></div>
             <div class="product-price-container">
@@ -60,6 +61,17 @@
                 </div>
                 }
             </div>
+
+            @if (product.bodyBenefits; as bodyBenefits) {
+            <div class="product-body-benefits">
+                <h3 class="body-benefits-title">Body Benefits</h3>
+                <div class="body-benefits-grid">
+                    @for (bodyBenefit of bodyBenefits; track bodyBenefit.name) {
+                    <div class="product-body-benefit">{{bodyBenefit.icon}} {{bodyBenefit.name}}</div>
+                    }
+                </div>
+            </div>
+            }
         </div>
     </div>
 

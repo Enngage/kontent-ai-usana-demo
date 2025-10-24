@@ -4,13 +4,17 @@ import { NgOptimizedImage } from "@angular/common";
 import { AppFlexModule } from "../ui/flex/flex.module";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AppImage } from "../../models/core.models";
-import { Product as KontentProduct } from "../../../_generated/delivery";
+import { BodyBenefitsTaxonomyTermCodenames, Product as KontentProduct } from "../../../_generated/delivery";
 import { formatPriceInCents, getImageHeightWhilePreservingAspectRatio } from "../../utils/core.utils";
-import { Product as CommerceToolsProduct } from "@commercetools/platform-sdk";
 import { RouterLink } from "@angular/router";
 
 export function getProductUrl(codename: string): string {
     return `/product/${codename}`;
+}
+
+type BodyBenefit = {
+    readonly name: string;
+    readonly icon: string;
 }
 
 type BaseProductInfo = {
@@ -19,6 +23,7 @@ type BaseProductInfo = {
     readonly descriptionHtml: string;
     readonly image: AppImage | undefined;
     readonly commerceToolsId: string | undefined;
+    readonly bodyBenefits: readonly BodyBenefit[];
 }
 
 type SKUInfo = {
@@ -107,6 +112,7 @@ export class ProductComponent extends CoreComponent {
                 title: item.elements.name.value,
                 descriptionHtml: item.elements.more_information.value,
                 commerceToolsId: this.extractCommerceToolsId(item),
+                bodyBenefits: item.elements.body_benefits.value.map(m => ({ name: m.name, icon: this.getBodyBenefitIcon(m.codename) })),
                 image: {
                     url: this.kontentAiService.getImageBuilder(image.url)
                         .withHeight(height)
@@ -120,6 +126,25 @@ export class ProductComponent extends CoreComponent {
             console.error(error);
             return 'n/a';
         });
+    }
+
+    private getBodyBenefitIcon(bodyBenefit: BodyBenefitsTaxonomyTermCodenames): string {
+        switch (bodyBenefit) {
+            case 'heart_health':
+                return '🏥';
+            case 'joint_health':
+                return '💪';
+            case 'brain_health':
+                return '🧠';
+            case 'immune_health':
+                return '🛡️';
+            case 'digestive_health':
+                return '🍏';
+            case 'healthy_energy':
+                return '🔋';
+            case 'skin_health':
+                return '🌟';
+        }
     }
 
     private getCommerceToolsProduct(id: string | undefined): Promise<SKUInfo | undefined> {

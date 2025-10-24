@@ -153,6 +153,50 @@
     padding: 20px;
 }
 
+.product-body-benefits {
+    margin-top: 32px;
+    padding: 24px;
+    background: linear-gradient(135deg, #f0f9f1 0%, #ffffff 100%);
+    border-radius: 12px;
+    border: 1px solid #d4edda;
+    box-shadow: 0 2px 8px rgba(44, 95, 45, 0.08);
+
+    .body-benefits-title {
+        font-size: 22px;
+        font-weight: 600;
+        color: #2c5f2d;
+        margin: 0 0 20px 0;
+        line-height: 1.2;
+    }
+
+    .body-benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+    }
+
+    .product-body-benefit {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 18px;
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #e0f0e3;
+        font-size: 15px;
+        font-weight: 500;
+        color: #2c5f2d;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(44, 95, 45, 0.12);
+            border-color: #2c5f2d;
+        }
+    }
+}
+
 .product-price-container {
     margin-top: 32px;
     padding: 24px;
