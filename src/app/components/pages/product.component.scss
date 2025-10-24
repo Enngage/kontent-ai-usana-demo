@@ -1,6 +1,44 @@
 .product-container {
     margin-top: 32px;
 
+    .product-breadcrumbs {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 12px 0;
+        margin-bottom: 20px;
+        font-size: 14px;
+
+        .breadcrumb-item {
+            color: #666;
+            font-weight: 400;
+            
+            &:last-of-type {
+                color: #2c5f2d;
+                font-weight: 500;
+            }
+        }
+
+        .breadcrumb-link {
+            color: #2c5f2d;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s ease;
+            
+            &:hover {
+                opacity: 0.7;
+                text-decoration: underline;
+            }
+        }
+
+        .breadcrumb-separator {
+            color: #ccc;
+            user-select: none;
+            font-weight: 300;
+        }
+    }
+
     h1 {
         font-size: 36px;
         font-weight: 700;

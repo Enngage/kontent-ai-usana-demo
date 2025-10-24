@@ -7,12 +7,14 @@ import { AppImage } from "../../models/core.models";
 import { Product as KontentProduct } from "../../../_generated/delivery";
 import { formatPriceInCents, getImageHeightWhilePreservingAspectRatio } from "../../utils/core.utils";
 import { Product as CommerceToolsProduct } from "@commercetools/platform-sdk";
+import { RouterLink } from "@angular/router";
 
 export function getProductUrl(codename: string): string {
     return `/product/${codename}`;
 }
 
 type BaseProductInfo = {
+    readonly categories: readonly string[];
     readonly title: string;
     readonly descriptionHtml: string;
     readonly image: AppImage | undefined;
@@ -30,7 +32,7 @@ type SKUInfo = {
     selector: 'product',
     templateUrl: './product.component.html',
     styleUrls: ['./product.component.scss'],
-    imports: [NgOptimizedImage, AppFlexModule],
+    imports: [NgOptimizedImage, AppFlexModule, RouterLink],
 })
 export class ProductComponent extends CoreComponent {
 
@@ -101,6 +103,7 @@ export class ProductComponent extends CoreComponent {
             const height = getImageHeightWhilePreservingAspectRatio({ originalWidth: image.width, originalHeight: image.height, targetWidth: width });
 
             const productInfo: BaseProductInfo = {
+                categories: item.elements.product_type.value.map(m => m.name),
                 title: item.elements.name.value,
                 descriptionHtml: item.elements.more_information.value,
                 commerceToolsId: this.extractCommerceToolsId(item),
@@ -127,7 +130,7 @@ export class ProductComponent extends CoreComponent {
         return this.commerceToolsService.getProductById(id).then(response => {
             const channels = response.masterData.current.masterVariant.availability?.channels;
             const channel = Object.entries(channels ?? {})?.[0];
-            const description =  Object.entries(response.masterData.current.description ?? {})?.[0]?.[1] ?? '';
+            const description = Object.entries(response.masterData.current.description ?? {})?.[0]?.[1] ?? '';
 
             const skuInfo: SKUInfo = {
                 description: description,

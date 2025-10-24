@@ -9,6 +9,19 @@
 </div>
 } @else {
 <div class="product-container">
+
+    @if (product.categories; as categories) {
+    <nav class="product-breadcrumbs" aria-label="Breadcrumb">
+        <a [routerLink]="'/'" class="breadcrumb-item breadcrumb-link">Home</a>
+        <span class="breadcrumb-separator">/</span>
+        @for (category of categories; track $index; let isLast = $last) {
+        <span class="breadcrumb-item">{{category}}</span>
+        @if (!isLast) {
+        <span class="breadcrumb-separator">/</span>
+        }
+        }
+    </nav>
+    }
     <div [libFlexRow]="true" [libFlexRowAlign]="'start'" [libFlexRowGap]="'24px'">
         <div libFlexColumn [libFlexSize]="'300px'">
             @if (product.image; as image) {
