@@ -10,37 +10,33 @@
 </div>
 
 <div class="product-intro-container">
+    @if (productIntro.value(); as productIntro) {
+    @if (productIntro === 'n/a') {
+    <div class="info-unavailable">
+        <div class="info-unavailable-icon">ℹ️</div>
+        <h3 class="info-unavailable-title">Category Information Unavailable</h3>
+        <p class="info-unavailable-description">
+            Introduction content for this category is currently not available.
+        </p>
+    </div>
+    } @else {
+    <div>
+        @if (productIntro.image; as image) {
+        <img [ngSrc]="image.url" [width]="image.width" [height]="image.height" priority alt="">
+        }
+        <h1>{{productIntro.title}}</h1>
+        <div [innerHTML]="productIntro.descriptionHtml"></div>
 
+    </div>
+    }
 
-            @if (productIntro.value(); as productIntro) {
+    }
 
-            @if (productIntro === 'n/a') {
-            <div class="info-unavailable">
-                <div class="info-unavailable-icon">ℹ️</div>
-                <h3 class="info-unavailable-title">Category Information Unavailable</h3>
-                <p class="info-unavailable-description">
-                    Introduction content for this category is currently not available.
-                </p>
-            </div>
-            } @else {
-            <div>
-                @if (productIntro.image; as image) {
-                <img [ngSrc]="image.url" [width]="image.width" [height]="image.height" priority alt="">
-                }
-                <h1>{{productIntro.title}}</h1>
-                <div [innerHTML]="productIntro.descriptionHtml"></div>
-
-            </div>
-            }
-
-            }
-   
 </div>
 
 
 <div class="products-container">
     @if (products.value(); as products) {
-
     @if (products.length > 0) {
     <div [libFlexRow]="true" [libFlexRowGap]="'24px'" [libFlexRowAlign]="'stretch'">
         @for (product of products; track product.id) {

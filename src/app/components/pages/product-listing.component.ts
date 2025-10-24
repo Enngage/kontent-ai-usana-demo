@@ -40,19 +40,17 @@ type ProductItem = {
     imports: [NgOptimizedImage, AppFlexModule, UiButtonComponent, RouterLink],
 })
 export class ProductListingComponent extends CoreComponent {
-
-    private readonly route = inject(ActivatedRoute);
     protected readonly currentProductTypeCodename = signal<ProductTypeTaxonomyTermCodenames | undefined>(undefined);
     protected readonly productCategories = signal<ProductCategory[] | undefined>(undefined);
 
     protected readonly productIntro = resource<ProductIntro | undefined | 'n/a', { readonly categoryCodename: ProductTypeTaxonomyTermCodenames | undefined }>({
         params: () => ({ categoryCodename: this.currentProductTypeCodename() }),
-        loader: ({ params: { categoryCodename } }) => this.loadProductIntro(categoryCodename),
+        loader: ({ params: { categoryCodename } }) => this.getProductIntro(categoryCodename),
     });
 
     protected readonly products = resource<readonly ProductItem[] | undefined, { readonly categoryCodename: ProductTypeTaxonomyTermCodenames | undefined }>({
         params: () => ({ categoryCodename: this.currentProductTypeCodename() }),
-        loader: ({ params: { categoryCodename } }) => this.loadProducts(categoryCodename),
+        loader: ({ params: { categoryCodename } }) => this.getProducts(categoryCodename),
     });
 
     constructor() {
@@ -63,13 +61,16 @@ export class ProductListingComponent extends CoreComponent {
     }
 
     private subscribeToRouteParams(): void {
-        this.route.params.subscribe((params) => {
-            const codename: string = params['codename'];
+        this.route.params
+            .pipe(
+                takeUntilDestroyed()
+            ).subscribe((params) => {
+                const codename: string = params['codename'];
 
-            if (isProductTypeTaxonomyTermCodename(codename)) {
-                this.currentProductTypeCodename.set(codename);
-            }
-        });
+                if (isProductTypeTaxonomyTermCodename(codename)) {
+                    this.currentProductTypeCodename.set(codename);
+                }
+            });
     }
 
     private loadProductCategories(): void {
@@ -93,7 +94,7 @@ export class ProductListingComponent extends CoreComponent {
             });
     }
 
-    private loadProducts(productTypeCodename: ProductTypeTaxonomyTermCodenames | undefined): Promise<readonly ProductItem[] | undefined> {
+    private getProducts(productTypeCodename: ProductTypeTaxonomyTermCodenames | undefined): Promise<readonly ProductItem[] | undefined> {
         if (!productTypeCodename) {
             return Promise.resolve(undefined);
         }
@@ -124,7 +125,7 @@ export class ProductListingComponent extends CoreComponent {
         });
     }
 
-    private loadProductIntro(productTypeCodename: ProductTypeTaxonomyTermCodenames | undefined): Promise<ProductIntro | undefined | 'n/a'> {
+    private getProductIntro(productTypeCodename: ProductTypeTaxonomyTermCodenames | undefined): Promise<ProductIntro | undefined | 'n/a'> {
         if (!productTypeCodename) {
             return Promise.resolve(undefined);
         }

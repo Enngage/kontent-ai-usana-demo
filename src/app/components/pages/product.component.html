@@ -1,1 +1,25 @@
-Article
+@if (product.value(); as product) {
+@if (product === 'n/a') {
+<div class="product-unavailable">
+    <div class="product-unavailable-icon">ℹ️</div>
+    <h3 class="product-unavailable-title">Product Unavailable</h3>
+    <p class="product-unavailable-description">
+        Product information for this product is currently not available.
+    </p>
+</div>
+} @else {
+<div class="product-container">
+    <div [libFlexRow]="true" [libFlexRowGap]="'24px'">
+        <div libFlexColumn [libFlexSize]="'300px'">
+            @if (product.image; as image) {
+            <img [ngSrc]="image.url" [width]="image.width" [height]="image.height" priority alt="">
+            }
+        </div>
+        <div libFlexColumn libFlexFill>
+            <h1>{{product.title}}</h1>
+            <div [innerHTML]="product.descriptionHtml"></div>
+        </div>
+    </div>
+</div>
+}
+}
