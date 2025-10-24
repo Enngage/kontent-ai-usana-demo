@@ -24,6 +24,7 @@ type BaseProductInfo = {
     readonly image: AppImage | undefined;
     readonly commerceToolsId: string | undefined;
     readonly bodyBenefits: readonly BodyBenefit[];
+    readonly sections: readonly { readonly title: string; readonly html: string }[];
 }
 
 type SKUInfo = {
@@ -108,6 +109,12 @@ export class ProductComponent extends CoreComponent {
             const height = getImageHeightWhilePreservingAspectRatio({ originalWidth: image.width, originalHeight: image.height, targetWidth: width });
 
             const productInfo: BaseProductInfo = {
+                sections: [
+                    { title: 'More Information', html: item.elements.more_information.value },
+                    { title: 'About the Product', html: item.elements.about_the_product.value },
+                    { title: 'How to Use & what to expect', html: item.elements.how_to_use.value },
+                    { title: 'Our Formula', html: item.elements.our_formula.value },
+                ],
                 categories: item.elements.product_type.value.map(m => m.name),
                 title: item.elements.name.value,
                 descriptionHtml: item.elements.more_information.value,

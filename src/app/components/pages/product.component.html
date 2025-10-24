@@ -72,6 +72,17 @@
                 </div>
             </div>
             }
+
+            @if (product.sections; as sections) {
+            @for (section of sections; track section.title) {
+            @if (section.html.length > 0) {
+            <div class="product-section">
+                <h3 class="section-title">{{section.title}}</h3>
+                <div class="section-content" [innerHTML]="section.html"></div>
+            </div>
+            }
+            }
+            }
         </div>
     </div>
 
