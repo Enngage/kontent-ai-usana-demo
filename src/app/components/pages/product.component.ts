@@ -66,9 +66,9 @@ export class ProductComponent extends CoreComponent {
         return getProductListingUrl(kontentProduct.categoryCodename);
     });
 
-    protected readonly kontentProduct = resource<BaseProductInfo | undefined | 'n/a', { readonly codename: string | undefined }>({
-        params: () => ({ codename: this.currentCodename() }),
-        loader: ({ params: { codename } }) => this.getKontentProduct(codename),
+    protected readonly kontentProduct = resource<BaseProductInfo | undefined | 'n/a', { readonly codename: string | undefined, readonly usePreview: boolean }>({
+        params: () => ({ codename: this.currentCodename(), usePreview: this.isPreview() }),
+        loader: ({ params: { codename, usePreview } }) => this.getKontentProduct(codename, usePreview),
     });
 
     protected readonly commerceToolsProduct = resource<SKUInfo | undefined, { readonly id: string | undefined }>({
@@ -113,12 +113,12 @@ export class ProductComponent extends CoreComponent {
             });
     }
 
-    private getKontentProduct(codename: string | undefined): Promise<BaseProductInfo | undefined | 'n/a'> {
+    private getKontentProduct(codename: string | undefined, usePreview: boolean): Promise<BaseProductInfo | undefined | 'n/a'> {
         if (!codename) {
             return Promise.resolve(undefined);
         }
 
-        return this.kontentAiService.deliveryClient.item<KontentProduct>(codename).toPromise().then(response => {
+        return this.kontentAiService.getClient(usePreview).item<KontentProduct>(codename).toPromise().then(response => {
             const item = response.data.item;
             const image = item.elements.images.value?.[0];
 

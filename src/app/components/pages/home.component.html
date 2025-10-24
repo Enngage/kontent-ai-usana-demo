@@ -12,7 +12,7 @@
         <div [innerHTML]="bodyCopyHtml"></div>
     </div>
     }
-    @if (products(); as products) {
+    @if (products.value(); as products) {
     <div class="products-container">
         <div [libFlexRow]="true" [libFlexRowGap]="'32px'" [libFlexRowAlign]="'center'">
             @for (product of products; track product.id) {

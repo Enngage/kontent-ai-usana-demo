@@ -1,4 +1,4 @@
-import { Component, inject, resource, signal } from "@angular/core";
+import { Component, computed, inject, resource, signal } from "@angular/core";
 import { AppFlexModule } from "../ui/flex/flex.module";
 import { UiButtonComponent } from "../ui/ui-button.component";
 import { NgOptimizedImage } from "@angular/common";
@@ -40,24 +40,30 @@ type ProductItem = {
     imports: [NgOptimizedImage, AppFlexModule, UiButtonComponent, RouterLink],
 })
 export class ProductListingComponent extends CoreComponent {
-    protected readonly currentProductTypeCodename = signal<ProductTypeTaxonomyTermCodenames | undefined>(undefined);
-    protected readonly productCategories = signal<ProductCategory[] | undefined>(undefined);
+    protected readonly selectedProductTypeCodename = signal<ProductTypeTaxonomyTermCodenames | undefined>(undefined);
+    protected readonly currentProductTypeCodename = computed<ProductTypeTaxonomyTermCodenames | undefined>(() => {
+        return this.selectedProductTypeCodename() ?? this.productCategories.value()?.[0]?.codename;
+    });
 
     protected readonly productIntro = resource<ProductIntro | undefined | 'n/a', { readonly categoryCodename: ProductTypeTaxonomyTermCodenames | undefined }>({
         params: () => ({ categoryCodename: this.currentProductTypeCodename() }),
-        loader: ({ params: { categoryCodename } }) => this.getProductIntro(categoryCodename),
+        loader: ({ params: { categoryCodename } }) => this.getProductIntro(categoryCodename, this.isPreview()),
     });
 
     protected readonly products = resource<readonly ProductItem[] | undefined, { readonly categoryCodename: ProductTypeTaxonomyTermCodenames | undefined }>({
         params: () => ({ categoryCodename: this.currentProductTypeCodename() }),
-        loader: ({ params: { categoryCodename } }) => this.getProducts(categoryCodename),
+        loader: ({ params: { categoryCodename } }) => this.getProducts(categoryCodename, this.isPreview()),
+    });
+
+    protected readonly productCategories = resource<readonly ProductCategory[] | undefined, { readonly isPreview: boolean }>({
+        params: () => ({ isPreview: this.isPreview() }),
+        loader: ({ params: { isPreview } }) => this.getProductCategories(isPreview),
     });
 
     constructor() {
         super();
 
         this.subscribeToRouteParams();
-        this.loadProductCategories();
     }
 
     private subscribeToRouteParams(): void {
@@ -68,18 +74,15 @@ export class ProductListingComponent extends CoreComponent {
                 const codename: string = params['codename'];
 
                 if (isProductTypeTaxonomyTermCodename(codename)) {
-                    this.currentProductTypeCodename.set(codename);
+                    this.selectedProductTypeCodename.set(codename);
                 }
             });
     }
 
-    private loadProductCategories(): void {
-        promiseToObservable(this.kontentAiService.deliveryClient.taxonomy('product_type').toPromise())
-            .pipe(
-                takeUntilDestroyed(),
-            )
-            .subscribe((response) => {
-                this.productCategories.set(response.data.taxonomy.terms.map<ProductCategory | undefined>(m => {
+    private getProductCategories(usePreview: boolean): Promise<readonly ProductCategory[]> {
+        return (this.kontentAiService.getClient(usePreview).taxonomy('product_type').toPromise()
+            .then(response => {
+                return response.data.taxonomy.terms.map<ProductCategory | undefined>(m => {
                     if (isProductTypeTaxonomyTermCodename(m.codename)) {
                         return {
                             name: m.name,
@@ -88,21 +91,17 @@ export class ProductListingComponent extends CoreComponent {
                         }
                     }
                     return undefined;
-                }).filter(isNotUndefined))
+                }).filter(isNotUndefined)
+            }))
 
-                if (!this.currentProductTypeCodename()) {
-                   this.currentProductTypeCodename.set(this.productCategories()?.[0]?.codename);
-                }
-
-            });
     }
 
-    private getProducts(productTypeCodename: ProductTypeTaxonomyTermCodenames | undefined): Promise<readonly ProductItem[] | undefined> {
+    private getProducts(productTypeCodename: ProductTypeTaxonomyTermCodenames | undefined, usePreview: boolean): Promise<readonly ProductItem[] | undefined> {
         if (!productTypeCodename) {
             return Promise.resolve(undefined);
         }
 
-        return this.kontentAiService.deliveryClient.items<Product>().limitParameter(10).type('product').anyFilter(getElementsProperty<ProductElementCodenames>('product_type'), [productTypeCodename]).toPromise().then(response => {
+        return this.kontentAiService.getClient(usePreview).items<Product>().limitParameter(10).type('product').anyFilter(getElementsProperty<ProductElementCodenames>('product_type'), [productTypeCodename]).toPromise().then(response => {
             return response.data.items?.map<ProductItem | undefined>(m => {
                 const image = m.elements.images.value?.[0];
                 if (!image) {
@@ -128,12 +127,12 @@ export class ProductListingComponent extends CoreComponent {
         });
     }
 
-    private getProductIntro(productTypeCodename: ProductTypeTaxonomyTermCodenames | undefined): Promise<ProductIntro | undefined | 'n/a'> {
+    private getProductIntro(productTypeCodename: ProductTypeTaxonomyTermCodenames | undefined, usePreview: boolean): Promise<ProductIntro | undefined | 'n/a'> {
         if (!productTypeCodename) {
             return Promise.resolve(undefined);
         }
 
-        return this.kontentAiService.deliveryClient.items<Page>().limitParameter(1).type('page').anyFilter(getElementsProperty<PageElementCodenames>('category'), [productTypeCodename]).toPromise().then(response => {
+        return this.kontentAiService.getClient(usePreview).items<Page>().limitParameter(1).type('page').anyFilter(getElementsProperty<PageElementCodenames>('category'), [productTypeCodename]).toPromise().then(response => {
             const page = response.data.items?.[0];
 
             if (!page) {

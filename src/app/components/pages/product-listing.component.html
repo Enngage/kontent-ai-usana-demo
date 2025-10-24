@@ -1,5 +1,5 @@
 <div [libFlexRow]="true" [libFlexRowGap]="'24px'" class="product-listing-container">
-    @if (productCategories(); as productCategories) {
+    @if (productCategories.value(); as productCategories) {
     @for (productCategory of productCategories; track productCategory.codename) {
     <div libFlexColumn>
         <a [class.active]="productCategory.codename === currentProductTypeCodename()"

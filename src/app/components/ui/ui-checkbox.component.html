@@ -1,0 +1,9 @@
+<div class="ui-checkbox" (click)="handleClick($event)">
+	<label class="control control--checkbox">
+		@if (label(); as label) {
+		<span class="control-label">{{ label }}</span>
+		}
+		<input [ngModel]="checked()" (ngModelChange)="handleModelChange($event)" type="checkbox" />
+		<div class="control__indicator"></div>
+	</label>
+</div>

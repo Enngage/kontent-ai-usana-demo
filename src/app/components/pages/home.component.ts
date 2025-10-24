@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from "@angular/core";
+import { Component, computed, inject, resource, signal } from "@angular/core";
 import { KontentAiService } from "../../services/kontent-ai.service";
 import { LandingPage, Product } from "../../../_generated/delivery";
 import { promiseToObservable } from "../../utils/core.utils";
@@ -42,11 +42,8 @@ type ProductListingItem = {
 })
 export class HomeComponent extends CoreComponent {
     private readonly maxFeaturedProducts = 2;
-    private readonly landingPage = signal<LandingPage | undefined>(undefined);
-    protected readonly products = signal<readonly ProductListingItem[] | undefined>(undefined);
-
     protected readonly heroImage = computed<{ readonly url: string; readonly width: number; readonly height: number } | undefined>(() => {
-        const heroImage = this.landingPage()?.elements.hero_image.value?.[0];
+        const heroImage = this.landingPage.value()?.elements.hero_image.value?.[0];
 
         if (!heroImage) {
             return undefined;
@@ -65,11 +62,11 @@ export class HomeComponent extends CoreComponent {
     });
 
     protected readonly bodyCopyHtml = computed<string | undefined>(() => {
-        return this.landingPage()?.elements.body_copy.value ?? undefined;
+        return this.landingPage.value()?.elements.body_copy.value ?? undefined;
     });
 
     protected readonly homeCTA = computed<HomeCTA | undefined>(() => {
-        const homeCTA = this.landingPage()?.elements.call_to_action.linkedItems;
+        const homeCTA = this.landingPage.value()?.elements.call_to_action.linkedItems;
 
         if (!homeCTA?.length) {
             return undefined;
@@ -95,7 +92,7 @@ export class HomeComponent extends CoreComponent {
 
 
     protected readonly featuredProducts = computed<readonly FeaturedProduct[] | undefined>(() => {
-        const featuredProducts = this.landingPage()?.elements.featured_products.linkedItems.slice(0, this.maxFeaturedProducts);
+        const featuredProducts = this.landingPage.value()?.elements.featured_products.linkedItems.slice(0, this.maxFeaturedProducts);
 
         if (!featuredProducts?.length) {
             return undefined;
@@ -117,30 +114,31 @@ export class HomeComponent extends CoreComponent {
         });
     });
 
+    protected readonly landingPage = resource<LandingPage | undefined, { readonly isPreview: boolean }>({
+        params: () => ({ isPreview: this.isPreview() }),
+        loader: ({ params: { isPreview } }) => this.getLandingPage(isPreview),
+    });
+
+    protected readonly products = resource<readonly ProductListingItem[] | undefined, { readonly isPreview: boolean }>({
+        params: () => ({ isPreview: this.isPreview() }),
+        loader: ({ params: { isPreview } }) => this.getProducts(isPreview),
+    });
+
     constructor() {
         super();
 
-        this.loadLandingPage();
-        this.loadProducts();
     }
 
-    private loadLandingPage(): void {
-        promiseToObservable(this.kontentAiService.deliveryClient.items<LandingPage>().limitParameter(1).type('landing_page').toPromise())
-            .pipe(
-                takeUntilDestroyed(),
-            )
-            .subscribe((response) => {
-                this.landingPage.set(response.data.items?.[0]);
-            });
+    private getLandingPage(usePreview: boolean): Promise<LandingPage | undefined> {
+        return this.kontentAiService.getClient(usePreview).items<LandingPage>().limitParameter(1).type('landing_page').toPromise().then(response => {
+            return response.data.items?.[0];
+        });
     }
 
-    private loadProducts(): void {
-        promiseToObservable(this.kontentAiService.deliveryClient.items<Product>().limitParameter(20).type('product').toPromise())
-            .pipe(
-                takeUntilDestroyed(),
-            )
-            .subscribe((response) => {
-                this.products.set(response.data.items?.map<ProductListingItem>(m => {
+    private getProducts(usePreview: boolean): Promise<readonly ProductListingItem[] | undefined> {
+        return (this.kontentAiService.getClient(usePreview).items<Product>().limitParameter(20).type('product').toPromise())
+            .then(response => {
+                return response.data.items?.map<ProductListingItem>(m => {
                     const widthAndHeight = 130;
                     const productType = m.elements.product_type.value?.[0];
                     return {
@@ -156,7 +154,7 @@ export class HomeComponent extends CoreComponent {
                                 .withWidth(widthAndHeight).getUrl(), width: widthAndHeight, height: widthAndHeight
                         }
                     }
-                }));
-            });
+                })
+            })
     }
 }

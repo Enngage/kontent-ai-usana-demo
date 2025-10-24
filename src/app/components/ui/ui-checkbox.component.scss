@@ -1,0 +1,63 @@
+.ui-checkbox .control {
+	display: block;
+	position: relative;
+	padding-left: 30px;
+	cursor: pointer;
+	font-size: 1rem;
+	height: 20px;
+	box-sizing: border-box;
+}
+.ui-checkbox .control input {
+	position: relative;
+	z-index: -1;
+	opacity: 0;
+}
+.ui-checkbox .control__indicator {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 20px;
+	width: 20px;
+	border-radius: 5px;
+	box-sizing: border-box;
+	background: white;
+}
+.ui-checkbox .control:hover input ~ .control__indicator,
+.ui-checkbox .control input:focus ~ .control__indicator {
+	background: white;
+}
+.ui-checkbox .control input:checked ~ .control__indicator {
+	background: var(--primary-color);
+}
+.ui-checkbox .control:hover input:not([disabled]):checked ~ .control__indicator,
+.ui-checkbox .control input:checked:focus ~ .control__indicator {
+	background: var(--primary-color);
+}
+.ui-checkbox .control input:disabled ~ .control__indicator {
+	background: white;
+	opacity: 0.6;
+	pointer-events: none;
+}
+.ui-checkbox .control__indicator:after {
+	content: '';
+	position: absolute;
+	display: none;
+}
+.ui-checkbox .control input:checked ~ .control__indicator:after {
+	display: block;
+}
+.ui-checkbox .control--checkbox .control__indicator:after {
+	left: 8px;
+	top: 4px;
+	width: 3px;
+	height: 8px;
+	border: solid white;
+	border-width: 0 2px 2px 0;
+	transform: rotate(45deg);
+}
+.ui-checkbox .control--checkbox input:disabled ~ .control__indicator:after {
+	border-color: white;
+}
+.control-label {
+  color: white;
+}
