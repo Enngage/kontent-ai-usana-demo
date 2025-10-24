@@ -90,6 +90,9 @@ export class ProductListingComponent extends CoreComponent {
                     return undefined;
                 }).filter(isNotUndefined))
 
+                if (!this.currentProductTypeCodename()) {
+                   this.currentProductTypeCodename.set(this.productCategories()?.[0]?.codename);
+                }
 
             });
     }

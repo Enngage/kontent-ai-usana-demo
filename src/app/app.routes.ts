@@ -10,6 +10,10 @@ export const routes: Routes = [
         component: HomeComponent,
     },
     {
+        path: 'listing',
+        component: ProductListingComponent,
+    },
+    {
         path: 'listing/:codename',
         component: ProductListingComponent,
     },
