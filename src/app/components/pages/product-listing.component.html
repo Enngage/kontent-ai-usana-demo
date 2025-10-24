@@ -40,17 +40,17 @@
     @if (products.length > 0) {
     <div [libFlexRow]="true" [libFlexRowGap]="'24px'" [libFlexRowAlign]="'stretch'">
         @for (product of products; track product.id) {
-        <div libFlexColumn [libFlexSize]="'250px'" class="product-item">
+        <a [routerLink]="product.url" libFlexColumn [libFlexSize]="'250px'" class="product-item">
             <img [ngSrc]="product.image.url" [width]="product.image.width" [height]="product.image.height" priority
                 alt="">
             <h4>{{product.title}}</h4>
             <div class="product-item-actions">
-                <a [routerLink]="product.url">
+                <a>
                     <ui-button>View Product</ui-button>
                 </a>
             </div>
 
-        </div>
+        </a>
         }
     </div>
     } @else {

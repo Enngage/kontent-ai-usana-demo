@@ -32,6 +32,7 @@ type BaseProductInfo = {
     readonly commerceToolsId: string | undefined;
     readonly bodyBenefits: readonly BodyBenefit[];
     readonly sections: readonly Section[];
+    readonly recommendedProducts: readonly RecommendedProduct[];
 }
 
 type SKUInfo = {
@@ -39,6 +40,12 @@ type SKUInfo = {
     readonly price: string;
     readonly inStockCount: number;
     readonly description: string;
+}
+
+type RecommendedProduct = {
+    readonly name: string;
+    readonly image: AppImage;
+    readonly url: string;
 }
 
 @Component({
@@ -124,6 +131,7 @@ export class ProductComponent extends CoreComponent {
 
             const productInfo: BaseProductInfo = {
                 categoryCodename: item.elements.product_type.value?.[0]?.codename,
+                recommendedProducts: this.getRecommendedProducts(item),
                 sections: [
                     { title: 'More Information', html: item.elements.more_information.value },
                     { title: 'About the Product', html: item.elements.about_the_product.value },
@@ -149,6 +157,37 @@ export class ProductComponent extends CoreComponent {
             console.error(error);
             return 'n/a';
         });
+    }
+
+    private getRecommendedProducts(item: KontentProduct): readonly RecommendedProduct[] {
+        const recommendedProducts = item.elements.recommended_products.linkedItems;
+
+        if (!recommendedProducts) {
+            return [];
+        }
+        return recommendedProducts.map<RecommendedProduct | undefined>(m => {
+            const image = m.elements.images.value?.[0];
+            if (!image) {
+                return undefined;
+            }
+
+            const width = 200;
+            const height = getImageHeightWhilePreservingAspectRatio({ originalWidth: image.width, originalHeight: image.height, targetWidth: width });
+
+            return {
+                name: m.elements.name.value,
+                image: {
+                    url: this.kontentAiService.getImageBuilder(image.url)
+                        .withFocalPointCrop(0.5, 0.5, 1)
+                        .withHeight(height)
+                        .withWidth(width).getUrl(),
+                    width,
+                    height,
+                },
+                url: getProductUrl(m.system.codename),
+            };
+        }).filter(isNotUndefined);
+
     }
 
     private getQualityAssuranceSections(item: KontentProduct): readonly Section[] {

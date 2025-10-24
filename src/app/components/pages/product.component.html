@@ -83,10 +83,33 @@
             }
             }
             }
+
+            @if (product.recommendedProducts; as recommendedProducts) {
+            <div class="product-recommended-products">
+                <h3 class="recommended-products-title">Recommended Products</h3>
+
+                @if (recommendedProducts.length === 0) {
+                <em class="product-recommended-product-empty">
+                    We couldn't find any recommended products for this product at the moment.
+                    <br>
+                    Please check back later or browse other products.
+                </em>
+                }
+
+                <div [libFlexRow]="true" [libFlexRowGap]="'24px'" [libFlexRowAlign]="'stretch'">
+                    @for (recommendedProduct of recommendedProducts; track recommendedProduct.name) {
+                    <div [routerLink]="recommendedProduct.url" class="product-recommended-product" libFlexColumn
+                        [libFlexSize]="'200px'">
+                        <img [ngSrc]="recommendedProduct.image.url" [width]="recommendedProduct.image.width"
+                            [height]="recommendedProduct.image.height" priority alt="">
+                        <h4>{{recommendedProduct.name}}</h4>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
         </div>
     </div>
-
-
 </div>
 }
 }
