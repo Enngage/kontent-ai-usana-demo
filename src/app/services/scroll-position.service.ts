@@ -6,6 +6,10 @@ import { Injectable } from '@angular/core';
 export class ScrollPositionService {
     private scrollPositions = new Map<string, number>();
 
+    scrollToTop(): void {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
     /**
      * Save the current scroll position with a key
      */
