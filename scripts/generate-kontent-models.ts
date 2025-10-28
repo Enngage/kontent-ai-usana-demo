@@ -3,6 +3,7 @@ import {
 	generateDeliveryModelsAsync,
 	generateEnvironmentModelsAsync,
 	generateItemsAsync,
+	generateMigrationModelsAsync,
 	generateSyncModelsAsync,
 	resolveCase,
 } from "@kontent-ai/model-generator";
@@ -28,6 +29,45 @@ const modelsToGenerate: readonly {
 							return resolveCase(type.name, "pascalCase");
 						},
 					},
+				});
+			},
+		},
+		{
+			folder: "./src/_generated/environment",
+			func: async (envId, mapiKey, _deliveryKey, folder) => {
+				await generateEnvironmentModelsAsync({
+					addTimestamp: false,
+					environmentId: envId,
+					managementApiKey: mapiKey,
+					outputDir: folder,
+					moduleFileExtension: "none",
+					createFiles: true,
+				});
+			},
+		},
+		{
+			folder: "./src/_generated/sync",
+			func: async (envId, mapiKey, _deliveryKey, folder) => {
+				await generateSyncModelsAsync({
+					addTimestamp: false,
+					environmentId: envId,
+					managementApiKey: mapiKey,
+					outputDir: folder,
+					moduleFileExtension: "none",
+					createFiles: true,
+				});
+			},
+		},
+		{
+			folder: "./src/_generated/migration",
+			func: async (envId, mapiKey, _deliveryKey, folder) => {
+				await generateMigrationModelsAsync({
+					addTimestamp: false,
+					environmentId: envId,
+					managementApiKey: mapiKey,
+					outputDir: folder,
+					moduleFileExtension: "none",
+					createFiles: true,
 				});
 			},
 		},
