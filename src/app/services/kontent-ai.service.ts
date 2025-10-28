@@ -5,8 +5,8 @@ import { environment } from "../../environments/environment";
 import { jsCookieHelper } from "../utils/js-cookie-helper.class";
 
 type KontentAiClients = {
-    published: CoreDeliveryClient;
-    preview: CoreDeliveryClient;
+    readonly published: CoreDeliveryClient;
+    readonly preview: CoreDeliveryClient;
 }
 
 @Injectable({

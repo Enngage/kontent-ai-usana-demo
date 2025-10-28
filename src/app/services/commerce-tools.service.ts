@@ -1,10 +1,8 @@
 import { Injectable } from "@angular/core";
 import {
     ClientBuilder,
-
-    // Import middlewares
-    type AuthMiddlewareOptions, // Required for auth
-    type HttpMiddlewareOptions, // Required for sending HTTP requests
+    type AuthMiddlewareOptions,
+    type HttpMiddlewareOptions,
 } from '@commercetools/ts-client';
 import { createApiBuilderFromCtpClient, Product } from '@commercetools/platform-sdk';
 import { environment } from "../../environments/environment";
@@ -13,7 +11,6 @@ import { environment } from "../../environments/environment";
     providedIn: 'root'
 })
 export class CommerceToolsService {
-
     private readonly authMiddlewareOptions: AuthMiddlewareOptions = {
         host: environment.commerceTools.authUrl,
         projectKey: environment.commerceTools.projectKey,
@@ -40,17 +37,13 @@ export class CommerceToolsService {
     private readonly apiRoot = createApiBuilderFromCtpClient(this.apiClient)
         .withProjectKey({ projectKey: environment.commerceTools.projectKey });
 
-    constructor() {
-
-    }
-
     async getProductById(id: string): Promise<Product> {
         const response = await this.apiRoot
             .products()
             .withId({ ID: id })
             .get()
             .execute();
-        
+
         return response.body;
     }
 
